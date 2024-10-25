@@ -3,6 +3,7 @@ import numpy as np
 import csv
 import pandas as pd
 import matplotlib.pyplot as plt
+from typing import List, Any, Union, Tuple
 from matplotlib.dates import DateFormatter
 import nltk
 import math
@@ -22,6 +23,7 @@ from pickle import dump
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 import unicodedata
+import plots
 
 import warnings
 warnings.filterwarnings('ignore')
