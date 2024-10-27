@@ -1,4 +1,5 @@
 from imports import *
+import config
 
 class Utils:
     def __init__(self):
@@ -26,7 +27,7 @@ class Utils:
         ax.xaxis.set_major_formatter(DateFormatter("%Y"))
 
         # Save the plot before showing it
-        output_path = os.path.join("..", "Output", "Data_outputs", output_file)
+        output_path = os.path.join(config.PLOT_PRICE_TIME, output_file)
         plt.savefig(output_path, bbox_inches='tight')
 
     def plot_technical_indicators(self, dataset: Union[List[List[Any]], np.ndarray], output_file: str) -> None:
@@ -70,4 +71,56 @@ class Utils:
         plt.xlabel("Year")
         plt.legend()
 
-        plt.savefig(output_file, bbox_inches='tight')
+        plt.savefig(os.path.join(config.PLOT_TECHNICAL_INDICATORS, output_file), bbox_inches='tight')
+
+    def training_plot(self, discriminator_loss : List[Any], generator_loss : List[Any], output_file : str):
+        plt.subplot(2,1,1)
+        plt.plot(discriminator_loss, label='Disc_loss', color='#000000')
+        plt.xlabel('Epoch')
+        plt.ylabel('Discriminator Loss')
+        plt.legend()
+
+        plt.subplot(2,1,2)
+        plt.plot(generator_loss, label='Gen_loss', color='#000000')
+        plt.xlabel('Epoch')
+        plt.ylabel('Generator Loss')
+        plt.legend()
+
+        if not output_file.endswith('.png'):
+            raise ValueError("plots/training_plot/ : The output file must have a '.png' extension.")
+
+        plt.savefig(os.path.join(config.TRAINING_PLOT, output_file), bbox_inches='tight')
+
+    def plot_traning_results(self, Real_price, Predicted_price, index_train, output_file : str):
+        X_scaler = load(open('/content/X_scaler.pkl', 'rb'))
+        y_scaler = load(open('/content/y_scaler.pkl', 'rb'))
+        train_predict_index = index_train
+
+        rescaled_Real_price = y_scaler.inverse_transform(Real_price)
+        rescaled_Predicted_price = y_scaler.inverse_transform(Predicted_price)
+
+        predict_result = pd.DataFrame()
+        for i in range(rescaled_Predicted_price.shape[0]):
+            y_predict = pd.DataFrame(rescaled_Predicted_price[i], columns=["predicted_price"], index=train_predict_index[i:i+output_dim])
+            predict_result = pd.concat([predict_result, y_predict], axis=1, sort=False)
+    
+        real_price = pd.DataFrame()
+        for i in range(rescaled_Real_price.shape[0]):
+            y_train = pd.DataFrame(rescaled_Real_price[i], columns=["real_price"], index=train_predict_index[i:i+output_dim])
+            real_price = pd.concat([real_price, y_train], axis=1, sort=False)
+    
+        predict_result['predicted_mean'] = predict_result.mean(axis=1)
+        real_price['real_mean'] = real_price.mean(axis=1)
+
+        plt.figure(figsize=(16, 8))
+        plt.plot(real_price["real_mean"])
+        plt.plot(predict_result["predicted_mean"], color = 'r')
+        plt.xlabel("Date")
+        plt.ylabel("Stock price")
+        plt.legend(("Real price", "Predicted price"), loc="upper left", fontsize=16)
+        plt.title("The result of Training", fontsize=20)
+
+        if not output_file.endswith('.png'):
+            raise ValueError("plots/plot_training_results/ : The output file must have a '.png' extension.")
+
+        plt.savefig(os.path.join(config.TRAINING_RESULTS_PLOT, output_file), bbox_inches = 'tight')
