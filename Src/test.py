@@ -2,7 +2,7 @@ from imports import *
 import config
 
 class Test:
-    def __init__(self) -> None:
+    def __init__(self):
         pass
 
     @tf.function
@@ -10,7 +10,7 @@ class Test:
         generated_data = generator(real_x, training = False)
         return generated_data
     
-    def data_plot(self, Real_test_price, Predicted_test_price, index_test) -> float:
+    def data_plot(self, Real_test_price, Predicted_test_price, index_test, output_dim) -> float:
         X_scaler = load(open(config.X_SCALED_PKL, 'rb'))
         y_scaler = load(open(config.Y_SCALED_PKL, 'rb'))
         test_predict_index = index_test

@@ -63,4 +63,4 @@ class Model:
 
         generator = Generator.generator_model(self.x_train.shape[1], self.output_dim, self.x_train.shape[2])
         discriminator = Discriminator.discriminator_model(self.x_train.shape[1])
-        return generator, discriminator
+        return generator, discriminator, g_optimizer, d_optimizer

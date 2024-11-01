@@ -34,7 +34,7 @@ class Train:
         train_info["generator_loss"] = []
 
         for epoch in tqdm(range(Epochs)):
-            real_price, fake_price, loss = self.train_steptrain_step(real_x, real_y, yc, generator, discriminator, g_optimizer, d_optimizer)
+            real_price, fake_price, loss = self.train_step(real_x, real_y, yc, generator, discriminator, g_optimizer, d_optimizer)
             G_losses = []
             D_losses = []
             Real_price = []

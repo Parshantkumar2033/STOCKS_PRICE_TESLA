@@ -2,6 +2,8 @@ import os
 import numpy as np
 import csv
 import pandas as pd
+
+%matplotlib inline
 import matplotlib.pyplot as plt
 from typing import List, Any, Union, Tuple
 from matplotlib.dates import DateFormatter

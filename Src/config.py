@@ -19,6 +19,8 @@ TEST_RESULT_PLOT = os.path.join("..", "Output", "Test")
 X_SCALED_PKL = os.path.join("..", "Data", "norm_data", "X_scaled.pkl")
 Y_SCALED_PKL = os.path.join("..", "Data", "norm_data", "Y_scaled.pkl")
 
+MODEL_VIZ =  os.path.join("..", "Output", "Model")
+
 
 '''
 Generator Model(versions) : ../Models/Generator/TSLA/

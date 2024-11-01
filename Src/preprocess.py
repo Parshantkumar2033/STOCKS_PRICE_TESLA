@@ -124,6 +124,13 @@ class DataPreparation:
         plots.Utils.plot_price_time(final_df, 'price_vs_time.png')
         plots.Utils.plot_technical_indicators(tech_df, "technical_indicators.png")
 
+        dataset.iloc[:, 1:] = pd.concat([dataset.iloc[:, 1:].ffill()])
+        datetime_series = pd.to_datetime(dataset['Date'])
+        datetime_index = pd.DatetimeIndex(datetime_series.values)
+        dataset = dataset.set_index(datetime_index)
+        dataset = dataset.sort_values(by='Date')
+        dataset = dataset.drop(columns='Date')
+
         return dataset
 
 class Preprocess:

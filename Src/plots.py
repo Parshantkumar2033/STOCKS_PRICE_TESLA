@@ -90,8 +90,9 @@ class Utils:
             raise ValueError("plots/training_plot/ : The output file must have a '.png' extension.")
 
         plt.savefig(os.path.join(config.TRAINING_PLOT, output_file), bbox_inches='tight')
+        plt.show()
 
-    def plot_traning_results(self, Real_price, Predicted_price, index_train, output_file : str):
+    def plot_traning_results(self, Real_price, Predicted_price, index_train, output_file : str, output_dim):
         X_scaler = load(open(config.X_SCALED_PKL, 'rb'))
         y_scaler = load(open(config.Y_SCALED_PKL, 'rb'))
         train_predict_index = index_train
@@ -124,6 +125,7 @@ class Utils:
             raise ValueError("plots/plot_training_results/ : The output file must have a '.png' extension.")
 
         plt.savefig(os.path.join(config.TRAINING_RESULTS_PLOT, output_file), bbox_inches = 'tight')
+        return predict_result
 
     def plot_test_data(self, real_price : Union[List[Any], np.ndarray], 
                        predict_result : Union[List[Any], np.ndarray], 
