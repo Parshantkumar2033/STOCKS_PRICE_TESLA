@@ -4,6 +4,9 @@ from model_dispatcher import Generator, Discriminator
 class Train:
     def __init__(self) -> None:
         self.stock_name = "TSLA"
+        self.plot = plots.Utils()
+        self.gen = Generator()
+        self.disc = Discriminator()
 
     @tf.function
     def train_step(self, real_x, real_y, yc, generator, discriminator, g_optimizer, d_optimizer):
@@ -17,8 +20,8 @@ class Train:
             real_output = discriminator(d_real_input, training=True)
             fake_output = discriminator(d_fake_input, training=True)
 
-            g_loss = Generator.loss(fake_output)
-            disc_loss = Discriminator.loss(real_output, fake_output)
+            g_loss = self.gen.loss(fake_output)
+            disc_loss = self.disc.loss(real_output, fake_output)
 
         gradients_of_generator = gen_tape.gradient(g_loss, generator.trainable_variables)
         gradients_of_discriminator = disc_tape.gradient(disc_loss, discriminator.trainable_variables)
@@ -45,12 +48,20 @@ class Train:
             Predicted_price.append(fake_price.numpy())
             Real_price.append(real_price.numpy())
 
+            saving_dir1 = os.path.join("..", "Models", "Generator", "TSLA")
+            if not os.path.exists(saving_dir1):
+                os.makedirs(saving_dir1)
+            saving_dir2 = os.path.join("..", "Models", "Discriminator", "TSLA")
+            if not os.path.exists(saving_dir2):
+                os.makedirs(saving_dir2)
+
             #Save model every X checkpoints
             if (epoch + 1) % checkpoint == 0:
-                tf.keras.models.save_model(generator, f'../Models/Generator/{self.stock_name}/generator_V_%d.h5' % epoch)
-                tf.keras.models.save_model(discriminator, f'../Models/Discrimintor/{self.stock_name}/discriminator_V_%d.h5' % epoch)
+                tf.keras.models.save_model(generator, f'../Models/Generator/TSLA/generator_V_{epoch}.h5')
+                tf.keras.models.save_model(discriminator, f'../Models/Discriminator/TSLA/discriminator_V_{epoch}.h5')
+
                 print('epoch', epoch + 1, 'discriminator_loss', loss['d_loss'].numpy(), 'generator_loss', loss['g_loss'].numpy())
-        
+
             train_info["discriminator_loss"].append(D_losses)
             train_info["generator_loss"].append(G_losses)
     
@@ -59,6 +70,6 @@ class Train:
         Real_price = np.array(Real_price)
         Real_price = Real_price.reshape(Real_price.shape[1], Real_price.shape[2])
 
-        plots.Utils.training_plot(train_info['discriminator_loss'], train_info['generator_loss'], output_file = 'training_plot.png')
+        self.plot.training_plot(train_info['discriminator_loss'], train_info['generator_loss'], output_file = 'training_plot.png')
 
         return Predicted_price, Real_price, np.sqrt(mean_squared_error(Real_price, Predicted_price)) / np.mean(Real_price)

@@ -1,4 +1,5 @@
 from imports import *
+import warnings
 
 nltk.download('vader_lexicon')
 warnings.filterwarnings('ignore')

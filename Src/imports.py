@@ -14,7 +14,7 @@ import time
 import tensorflow as tf
 from tensorflow.keras.layers import GRU, LSTM, Bidirectional, Dense, Flatten, Conv1D, BatchNormalization, LeakyReLU, Dropout
 from tensorflow.keras import Sequential
-from keras.utils import plot_model
+from keras.src.utils import plot_model
 from pickle import load
 from sklearn.metrics import mean_squared_error
 from tqdm import tqdm
@@ -27,5 +27,8 @@ from nltk.sentiment.vader import SentimentIntensityAnalyzer
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 import unicodedata
 import plots
+
+import warnings
+warnings.filterwarnings('ignore')
 
 print("...imports done")

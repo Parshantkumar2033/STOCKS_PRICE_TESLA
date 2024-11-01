@@ -3,7 +3,7 @@ import config
 
 class Test:
     def __init__(self):
-        pass
+        self.plot = plots.Utils()
 
     @tf.function
     def eval_op(self, generator, real_x):
@@ -38,6 +38,6 @@ class Test:
         RMSE = np.sqrt(mean_squared_error(predicted, real))
 
         # data plot
-        plots.Utils.plot_test_data(real_price, predict_result, 'test_data_plot.png')
+        self.plot.plot_test_data(real_price, predict_result, 'test_data_plot.png')
 
         return RMSE

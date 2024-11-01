@@ -3,3 +3,6 @@
 /Data/stock_tweets.csv
 
 /Data/stock_yfinance_data.csv
+
+/Models/Discriminator/TSLA
+/Models/Generator/TSLA

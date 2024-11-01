@@ -59,9 +59,12 @@ class Model:
 
     def make_model(self):
         print("Generator and Discriminator model")
-        g_optimizer = tf.keras.optimizers.Adam(lr = self.lr)
-        d_optimizer = tf.keras.optimizers.Adam(lr = self.lr)
+        g_optimizer = tf.keras.optimizers.Adam(learning_rate = self.lr)
+        d_optimizer = tf.keras.optimizers.Adam(learning_rate = self.lr)
 
-        generator = Generator.generator_model(self.x_train.shape[1], self.output_dim, self.x_train.shape[2])
-        discriminator = Discriminator.discriminator_model(self.x_train.shape[1])
+        gen = Generator()
+        disc = Discriminator()
+
+        generator = gen.generator_model(self.x_train.shape[1], self.output_dim, self.x_train.shape[2])
+        discriminator = disc.discriminator_model(self.x_train.shape[1])
         return generator, discriminator, g_optimizer, d_optimizer

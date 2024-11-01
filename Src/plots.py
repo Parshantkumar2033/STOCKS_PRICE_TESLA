@@ -5,7 +5,7 @@ class Utils:
     def __init__(self):
         self.stock_name = "TSLA"
     
-    def plot_price_time(self, data : Union[List[List[Any]], np.ndarray], output_file : str):
+    def plot_price_time(self, data: Union[pd.DataFrame, List[List[Any]], np.ndarray], output_file: str):
         '''
         Plots the stock price data and saves it as a PNG file.
 
@@ -27,11 +27,14 @@ class Utils:
         ax.set(xlabel="Date", ylabel="USD", title=f"Stock Price")
         ax.xaxis.set_major_formatter(DateFormatter("%Y"))
 
-        # Save the plot before showing it
+        output_directory = os.path.join(config.PLOT_PRICE_TIME) 
+        if not os.path.exists(output_directory):
+            os.makedirs(output_directory)
+
         output_path = os.path.join(config.PLOT_PRICE_TIME, output_file)
         plt.savefig(output_path, bbox_inches='tight')
 
-    def plot_technical_indicators(self, dataset: Union[List[List[Any]], np.ndarray], output_file: str) -> None:
+    def plot_technical_indicators(self, dataset, output_file: str) -> None:
         """
         Plots technical indicators including moving averages and closing price, and saves the plot as a PNG file.
 
@@ -48,7 +51,7 @@ class Utils:
         if not output_file.endswith('.png'):
             raise ValueError("The output file must have a '.png' extension.")
 
-        if isinstance(dataset, np.ndarray):
+        if isinstance(dataset, pd.DataFrame):
             df = pd.DataFrame(dataset, columns=['Date', 'Close', 'MA7', 'MA20'])
         elif isinstance(dataset, list):
             df = pd.DataFrame(dataset, columns=['Date', 'Close', 'MA7', 'MA20'])
@@ -60,7 +63,6 @@ class Utils:
         if not all(col in df.columns for col in required_columns):
             raise ValueError(f"Dataset must contain the following columns: {required_columns}")
 
-        # Create the plot
         fig, ax = plt.subplots(figsize=(15, 8), dpi=200)
         
         ax.plot(df['Date'], df['MA7'], label='Moving Average (7 days)', color='g', linestyle='--')
@@ -73,17 +75,21 @@ class Utils:
         plt.xlabel("Year")
         plt.legend()
 
+        output_directory = os.path.join(config.PLOT_TECHNICAL_INDICATORS) 
+        if not os.path.exists(output_directory):
+            os.makedirs(output_directory)
+
         plt.savefig(os.path.join(config.PLOT_TECHNICAL_INDICATORS, output_file), bbox_inches='tight')
 
-    def training_plot(self, discriminator_loss : List[Any], generator_loss : List[Any], output_file : str):
+    def training_plot(self, discriminator_loss: List[Any], generator_loss: List[Any], output_file: str):
         print("Plotting : Training data plot...")
-        plt.subplot(2,1,1)
+        plt.subplot(2, 1, 1)
         plt.plot(discriminator_loss, label='Disc_loss', color='#000000')
         plt.xlabel('Epoch')
         plt.ylabel('Discriminator Loss')
         plt.legend()
 
-        plt.subplot(2,1,2)
+        plt.subplot(2, 1, 2)
         plt.plot(generator_loss, label='Gen_loss', color='#000000')
         plt.xlabel('Epoch')
         plt.ylabel('Generator Loss')
@@ -92,10 +98,14 @@ class Utils:
         if not output_file.endswith('.png'):
             raise ValueError("plots/training_plot/ : The output file must have a '.png' extension.")
 
-        plt.savefig(os.path.join(config.TRAINING_PLOT, output_file), bbox_inches='tight')
+        output_directory = config.TRAINING_PLOT
+        if not os.path.exists(output_directory):
+            os.makedirs(output_directory)
+
+        plt.savefig(os.path.join(output_directory, output_file), bbox_inches='tight')
         plt.show()
 
-    def plot_traning_results(self, Real_price, Predicted_price, index_train, output_file : str, output_dim):
+    def plot_traning_results(self, Real_price, Predicted_price, index_train, output_file: str, output_dim):
         print("Plotting : Training results plot...")
 
         X_scaler = load(open(config.X_SCALED_PKL, 'rb'))
@@ -107,21 +117,20 @@ class Utils:
 
         predict_result = pd.DataFrame()
         for i in range(rescaled_Predicted_price.shape[0]):
-            y_predict = pd.DataFrame(rescaled_Predicted_price[i], columns=["predicted_price"], index=train_predict_index[i:i+output_dim])
+            y_predict = pd.DataFrame(rescaled_Predicted_price[i], columns=["predicted_price"], index=train_predict_index[i:i + output_dim])
             predict_result = pd.concat([predict_result, y_predict], axis=1, sort=False)
     
         real_price = pd.DataFrame()
         for i in range(rescaled_Real_price.shape[0]):
-            y_train = pd.DataFrame(rescaled_Real_price[i], columns=["real_price"], index=train_predict_index[i:i+output_dim])
+            y_train = pd.DataFrame(rescaled_Real_price[i], columns=["real_price"], index=train_predict_index[i:i + output_dim])
             real_price = pd.concat([real_price, y_train], axis=1, sort=False)
     
         predict_result['predicted_mean'] = predict_result.mean(axis=1)
         real_price['real_mean'] = real_price.mean(axis=1)
 
-
         plt.figure(figsize=(16, 8))
         plt.plot(real_price["real_mean"])
-        plt.plot(predict_result["predicted_mean"], color = 'r')
+        plt.plot(predict_result["predicted_mean"], color='r')
         plt.xlabel("Date")
         plt.ylabel("Stock price")
         plt.legend(("Real price", "Predicted price"), loc="upper left", fontsize=16)
@@ -129,17 +138,21 @@ class Utils:
 
         if not output_file.endswith('.png'):
             raise ValueError("plots/plot_training_results/ : The output file must have a '.png' extension.")
+ 
+        output_directory = config.TRAINING_RESULTS_PLOT
+        if not os.path.exists(output_directory):
+            os.makedirs(output_directory)
 
-        plt.savefig(os.path.join(config.TRAINING_RESULTS_PLOT, output_file), bbox_inches = 'tight')
+        plt.savefig(os.path.join(output_directory, output_file), bbox_inches='tight')
         return predict_result
 
-    def plot_test_data(self, real_price : Union[List[Any], np.ndarray], 
-                       predict_result : Union[List[Any], np.ndarray], 
-                       output_file : str) -> None:
+    def plot_test_data(self, real_price: Union[pd.Series, pd.DataFrame, List[Any], np.ndarray], 
+                       predict_result: Union[pd.Series, pd.DataFrame, List[Any], np.ndarray], 
+                       output_file: str) -> None:
         print("Plotting : Test data plot...")
         plt.figure(figsize=(16, 8))
         plt.plot(real_price["real_mean"], color='#00008B')
-        plt.plot(predict_result["predicted_mean"], color = '#8B0000', linestyle='--')
+        plt.plot(predict_result["predicted_mean"], color='#8B0000', linestyle='--')
         plt.xlabel("Date")
         plt.ylabel("Stock price")
         plt.legend(("Real price", "Predicted price"), loc="upper left", fontsize=16)
@@ -147,5 +160,9 @@ class Utils:
 
         if not output_file.endswith('.png'):
             raise ValueError("plots/plot_test_data/ : The output file must have a '.png' extension.")     
-        
-        plt.savefig(os.path.join(config.TRAINING_RESULTS_PLOT, output_file), bbox_inches = 'tight')
+
+        output_directory = config.TEST_RESULT_PLOT
+        if not os.path.exists(output_directory):
+            os.makedirs(output_directory)
+
+        plt.savefig(os.path.join(output_directory, output_file), bbox_inches='tight')

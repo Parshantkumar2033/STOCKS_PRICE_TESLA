@@ -10,8 +10,9 @@ class DataPreparation:
         self.dataset1 = dataset1
         self.dataset2 = dataset2
         self.stock_name = "TSLA"
+        self.plot = plots.Utils()
 
-    def technical_indicators(self, data):
+    def technical_indicators(self, data: pd.DataFrame) -> pd.DataFrame:
         """
         Calculates and explains various moving averages and Bollinger Bands used in stock price analysis.
 
@@ -43,7 +44,6 @@ class DataPreparation:
         data['MA7'] = data.iloc[:,4].rolling(window=7).mean() #Close column
         data['MA20'] = data.iloc[:,4].rolling(window=20).mean() #Close Column
 
-        #This is the difference of Closing price and Opening Price
         data['MACD'] = data.iloc[:,4].ewm(span=26).mean() - data.iloc[:,1].ewm(span=12,adjust=False).mean()
 
         data['20SD'] = data.iloc[:, 4].rolling(20).std()
@@ -52,13 +52,12 @@ class DataPreparation:
 
         data['EMA'] = data.iloc[:,4].ewm(com=0.5).mean()
 
-        # Create LogMomentum
         data['logmomentum'] = np.log(data.iloc[:,4] - 1)
         print("Added Technical Indicator")
 
         return data
 
-    def dataPreparation(self):
+    def dataPreparation(self) -> pd.DataFrame:
         print("...Data Preparation")
         all_tweets = pd.read_csv(self.dataset1)
         df = all_tweets[all_tweets['Stock Name'].isin([self.stock_name])]
@@ -73,7 +72,6 @@ class DataPreparation:
         temp_df["Neutral"] = ''
         temp_df["Positive"] = ''
 
-
         '''
         CALCULATING THE SENTIMENT SCORE FOR EACH TWEET
 
@@ -82,10 +80,9 @@ class DataPreparation:
             2.Removes extra formatting or stylistic differences between visually 
               identical characters (like superscripts or accented letters).
         '''
-        # 'from nltk.sentiment.vader import SentimentIntensityAnalyzer'
         sentiment_analyzer = SentimentIntensityAnalyzer()
         
-        for indx, row in temp_df.T.iteritems():
+        for indx, row in temp_df.T.items():
             try:
                 sentence_i = unicodedata.normalize('NFKD', temp_df.loc[indx, 'Tweet'])
                 sentence_sentiment = sentiment_analyzer.polarity_scores(sentence_i)
@@ -100,12 +97,13 @@ class DataPreparation:
 
         temp_df['Date'] = pd.to_datetime(temp_df['Date'])   # date-time datatype correction
         temp_df['Date'] = temp_df['Date'].dt.date
-        # dropping unecessary columns
-        temp_df = temp_df.drop(columns=['Stock Name', 'Company Name', 'Negative', 'Positive', 'Neutral'])
+        temp_df = temp_df.drop(columns=['Stock Name', 'Tweet', 'Company Name', 'Negative', 'Positive', 'Neutral'])
 
         '''
         Grouping the data for each date by taking the mean('sentiment_score')
         '''
+        temp_df['sentiment_score'] = temp_df['sentiment_score'].astype(float, errors='raise')
+        print(temp_df.info())
         tsla_df = temp_df.groupby([temp_df['Date']]).mean()
 
         # Fetching dataset2
@@ -117,14 +115,13 @@ class DataPreparation:
         final_df = stock_df.join(tsla_df, how="left", on="Date")
         final_df = final_df.drop(columns=['Stock Name'])
 
-
-        # Adding techinal Indicators
+        # Adding technical Indicators
         tech_df = self.technical_indicators(final_df)
         dataset = tech_df.iloc[20:,:].reset_index(drop=True)
 
         # visualizing the data
-        plots.Utils.plot_price_time(final_df, 'price_vs_time.png')
-        plots.Utils.plot_technical_indicators(tech_df, "technical_indicators.png")
+        self.plot.plot_price_time(final_df, 'price_vs_time.png')
+        self.plot.plot_technical_indicators(tech_df, "technical_indicators.png")
 
         dataset.iloc[:, 1:] = pd.concat([dataset.iloc[:, 1:].ffill()])
         datetime_series = pd.to_datetime(dataset['Date'])
@@ -140,9 +137,9 @@ class Preprocess:
     def __init__(self) -> None:
         pass
 
-    def normalize_data(df: pd.DataFrame, 
-                    range: Tuple[int, int],
-                    target_column: str) -> Tuple[np.ndarray, np.ndarray]:        
+    def normalize_data(self, df: pd.DataFrame, 
+                       range: Tuple[int, int],
+                       target_column: str) -> Tuple[np.ndarray, np.ndarray]:        
         '''
         df: dataframe object
         range: type tuple -> (lower_bound, upper_bound)
@@ -163,18 +160,18 @@ class Preprocess:
         X_scale_dataset = X_scaler.fit_transform(data)
         y_scale_dataset = y_scaler.fit_transform(target_df_series)
         
-        dump(X_scaler, open(config.X_SCALER_PKL, 'wb'))
-        dump(y_scaler, open(config.Y_SCALER_PKL, 'wb'))
+        dump(X_scaler, open(config.X_SCALED_PKL, 'wb'))
+        dump(y_scaler, open(config.Y_SCALED_PKL, 'wb'))
         return X_scale_dataset, y_scale_dataset
         
-    def batch_data(x_data: Union[np.ndarray, List[List[float]]], 
-               y_data: Union[np.ndarray, List[List[float]]], 
-               batch_size: int, 
-               predict_period: int) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+    def batch_data(self, x_data: Union[np.ndarray, List[List[float]]], 
+                   y_data: Union[np.ndarray, List[List[float]]], 
+                   batch_size: int, 
+                   predict_period: int) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         
         X_batched, y_batched, yc = list(), list(), list()
 
-        for i in range(0,len(x_data),1):
+        for i in range(0, len(x_data), 1):
             x_value = x_data[i: i + batch_size][:, :]
             y_value = y_data[i + batch_size: i + batch_size + predict_period][:, 0]
             yc_value = y_data[i: i + batch_size][:, :]
@@ -197,9 +194,9 @@ class Preprocess:
         return data_train, data_test
 
     def predict_index(self, dataset: pd.DataFrame, 
-                    X_train: pd.DataFrame, 
-                    batch_size: int, 
-                    prediction_period: int) -> Tuple[pd.Index, pd.Index]:
+                      X_train: pd.DataFrame, 
+                      batch_size: int, 
+                      prediction_period: int) -> Tuple[pd.Index, pd.Index]:
         """
         Retrieves the indices for training and testing predictions.
 
