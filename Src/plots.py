@@ -144,7 +144,7 @@ class Utils:
             os.makedirs(output_directory)
 
         plt.savefig(os.path.join(output_directory, output_file), bbox_inches='tight')
-        return predict_result
+        return predict_result, real_price
 
     def plot_test_data(self, real_price: Union[pd.Series, pd.DataFrame, List[Any], np.ndarray], 
                        predict_result: Union[pd.Series, pd.DataFrame, List[Any], np.ndarray], 

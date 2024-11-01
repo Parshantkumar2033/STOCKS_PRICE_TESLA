@@ -40,4 +40,4 @@ class Test:
         # data plot
         self.plot.plot_test_data(real_price, predict_result, 'test_data_plot.png')
 
-        return RMSE
+        return real_price, RMSE
