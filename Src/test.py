@@ -7,6 +7,7 @@ class Test:
 
     @tf.function
     def eval_op(self, generator, real_x):
+        print("eval_op...")
         generated_data = generator(real_x, training = False)
         return generated_data
     

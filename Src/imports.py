@@ -1,9 +1,10 @@
+print("imports...")
+
 import os
 import numpy as np
 import csv
 import pandas as pd
 
-%matplotlib inline
 import matplotlib.pyplot as plt
 from typing import List, Any, Union, Tuple
 from matplotlib.dates import DateFormatter
@@ -27,7 +28,4 @@ from nltk.sentiment.vader import SentimentIntensityAnalyzer
 import unicodedata
 import plots
 
-import warnings
-warnings.filterwarnings('ignore')
-
-print(tf.constant([1, 2, 3]))
+print("...imports done")

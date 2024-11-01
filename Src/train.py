@@ -29,6 +29,7 @@ class Train:
         return real_y, generated_data, {'d_loss': disc_loss, 'g_loss': g_loss}
     
     def training(self, real_x, real_y, yc, Epochs, generator, discriminator, g_optimizer, d_optimizer, checkpoint = 50):
+        print("Start Training...")
         train_info = {}
         train_info["discriminator_loss"] = []
         train_info["generator_loss"] = []

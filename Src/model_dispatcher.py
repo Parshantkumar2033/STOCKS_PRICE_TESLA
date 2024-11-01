@@ -58,6 +58,7 @@ class Model:
         self.output_dim = output_dim
 
     def make_model(self):
+        print("Generator and Discriminator model")
         g_optimizer = tf.keras.optimizers.Adam(lr = self.lr)
         d_optimizer = tf.keras.optimizers.Adam(lr = self.lr)
 

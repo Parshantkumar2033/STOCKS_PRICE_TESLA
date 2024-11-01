@@ -54,10 +54,12 @@ class DataPreparation:
 
         # Create LogMomentum
         data['logmomentum'] = np.log(data.iloc[:,4] - 1)
+        print("Added Technical Indicator")
 
         return data
 
     def dataPreparation(self):
+        print("...Data Preparation")
         all_tweets = pd.read_csv(self.dataset1)
         df = all_tweets[all_tweets['Stock Name'].isin([self.stock_name])]
 
@@ -130,6 +132,7 @@ class DataPreparation:
         dataset = dataset.set_index(datetime_index)
         dataset = dataset.sort_values(by='Date')
         dataset = dataset.drop(columns='Date')
+        print("Data Preparation Completed")
 
         return dataset
 
@@ -148,6 +151,7 @@ class Preprocess:
         target_column: type str -> should reflect closing price of stock
         '''
 
+        print("Data Normalization")
         target_df_series = pd.DataFrame(df[target_column])
         data = pd.DataFrame(df.iloc[:, :]) 
 
@@ -178,10 +182,11 @@ class Preprocess:
                 X_batched.append(x_value)
                 y_batched.append(y_value)
                 yc.append(yc_value)
-
+        print("batch data...")
         return np.array(X_batched), np.array(y_batched), np.array(yc)
 
     def split_train_test(self, data: Union[np.ndarray, pd.DataFrame]) -> Tuple[Union[np.ndarray, pd.DataFrame], Union[np.ndarray, pd.DataFrame]]:
+        print("train test split...")
 
         if len(data) < 20:
             raise ValueError("Input data must have at least 20 samples to split into train and test sets.")
@@ -210,5 +215,6 @@ class Preprocess:
         
         train_predict_index = dataset.iloc[batch_size: X_train.shape[0] + batch_size + prediction_period, :].index
         test_predict_index = dataset.iloc[X_train.shape[0] + batch_size:, :].index
+        print("index formation...")
 
         return train_predict_index, test_predict_index

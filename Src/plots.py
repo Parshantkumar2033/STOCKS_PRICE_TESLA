@@ -17,6 +17,7 @@ class Utils:
         Raises:
         - ValueError: If the output file does not end with '.png'.
         '''
+        print("Plotting : Price vs Time")
 
         if not output_file.endswith('.png'):
             raise ValueError("The output file must have a '.png' extension.")
@@ -43,6 +44,7 @@ class Utils:
         - ValueError: If the dataset does not contain required columns or if the output file is not a .png file.
         - TypeError: If the dataset is not a list or NumPy array.
         """
+        print("Plotting : Technical Indicators")
         if not output_file.endswith('.png'):
             raise ValueError("The output file must have a '.png' extension.")
 
@@ -74,6 +76,7 @@ class Utils:
         plt.savefig(os.path.join(config.PLOT_TECHNICAL_INDICATORS, output_file), bbox_inches='tight')
 
     def training_plot(self, discriminator_loss : List[Any], generator_loss : List[Any], output_file : str):
+        print("Plotting : Training data plot...")
         plt.subplot(2,1,1)
         plt.plot(discriminator_loss, label='Disc_loss', color='#000000')
         plt.xlabel('Epoch')
@@ -93,6 +96,8 @@ class Utils:
         plt.show()
 
     def plot_traning_results(self, Real_price, Predicted_price, index_train, output_file : str, output_dim):
+        print("Plotting : Training results plot...")
+
         X_scaler = load(open(config.X_SCALED_PKL, 'rb'))
         y_scaler = load(open(config.Y_SCALED_PKL, 'rb'))
         train_predict_index = index_train
@@ -113,6 +118,7 @@ class Utils:
         predict_result['predicted_mean'] = predict_result.mean(axis=1)
         real_price['real_mean'] = real_price.mean(axis=1)
 
+
         plt.figure(figsize=(16, 8))
         plt.plot(real_price["real_mean"])
         plt.plot(predict_result["predicted_mean"], color = 'r')
@@ -130,6 +136,7 @@ class Utils:
     def plot_test_data(self, real_price : Union[List[Any], np.ndarray], 
                        predict_result : Union[List[Any], np.ndarray], 
                        output_file : str) -> None:
+        print("Plotting : Test data plot...")
         plt.figure(figsize=(16, 8))
         plt.plot(real_price["real_mean"], color='#00008B')
         plt.plot(predict_result["predicted_mean"], color = '#8B0000', linestyle='--')
