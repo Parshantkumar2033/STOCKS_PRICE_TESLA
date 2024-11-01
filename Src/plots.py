@@ -3,7 +3,7 @@ import config
 
 class Utils:
     def __init__(self):
-        pass
+        self.stock_name = "TSLA"
     
     def plot_price_time(self, data : Union[List[List[Any]], np.ndarray], output_file : str):
         '''
@@ -92,8 +92,8 @@ class Utils:
         plt.savefig(os.path.join(config.TRAINING_PLOT, output_file), bbox_inches='tight')
 
     def plot_traning_results(self, Real_price, Predicted_price, index_train, output_file : str):
-        X_scaler = load(open('/content/X_scaler.pkl', 'rb'))
-        y_scaler = load(open('/content/y_scaler.pkl', 'rb'))
+        X_scaler = load(open(config.X_SCALED_PKL, 'rb'))
+        y_scaler = load(open(config.Y_SCALED_PKL, 'rb'))
         train_predict_index = index_train
 
         rescaled_Real_price = y_scaler.inverse_transform(Real_price)
@@ -123,4 +123,20 @@ class Utils:
         if not output_file.endswith('.png'):
             raise ValueError("plots/plot_training_results/ : The output file must have a '.png' extension.")
 
+        plt.savefig(os.path.join(config.TRAINING_RESULTS_PLOT, output_file), bbox_inches = 'tight')
+
+    def plot_test_data(self, real_price : Union[List[Any], np.ndarray], 
+                       predict_result : Union[List[Any], np.ndarray], 
+                       output_file : str) -> None:
+        plt.figure(figsize=(16, 8))
+        plt.plot(real_price["real_mean"], color='#00008B')
+        plt.plot(predict_result["predicted_mean"], color = '#8B0000', linestyle='--')
+        plt.xlabel("Date")
+        plt.ylabel("Stock price")
+        plt.legend(("Real price", "Predicted price"), loc="upper left", fontsize=16)
+        plt.title(f"Prediction on test data for {self.stock_name}", fontsize=20)
+
+        if not output_file.endswith('.png'):
+            raise ValueError("plots/plot_test_data/ : The output file must have a '.png' extension.")     
+        
         plt.savefig(os.path.join(config.TRAINING_RESULTS_PLOT, output_file), bbox_inches = 'tight')

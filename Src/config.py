@@ -12,6 +12,14 @@ PLOT_TECHNICAL_INDICATORS = os.path.join("..", "Output", "Data_outputs")
 TRAINING_PLOT = os.path.join("..", "Output", "Training")
 TRAINING_RESULTS_PLOT = os.path.join("..", "Output", "Training")
 
+TEST_PLOT = os.path.join("..", "Output", "Test")
+TEST_RESULT_PLOT = os.path.join("..", "Output", "Test")
+
+# normalized data
+X_SCALED_PKL = os.path.join("..", "Data", "norm_data", "X_scaled.pkl")
+Y_SCALED_PKL = os.path.join("..", "Data", "norm_data", "Y_scaled.pkl")
+
+
 '''
 Generator Model(versions) : ../Models/Generator/TSLA/
 Discriminator Model(versions) : ../Models/Discriminator/TSLA/

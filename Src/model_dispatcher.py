@@ -49,3 +49,18 @@ class Discriminator:
         fake_loss = loss_f(tf.zeros_like(fake_output), fake_output)
         total_loss = real_loss + fake_loss
         return total_loss
+
+class Model:
+    def __init__(self, learning_rate, epochs, x_train, output_dim):
+        self.lr = learning_rate
+        self.epochs = epochs
+        self.x_train = x_train
+        self.output_dim = output_dim
+
+    def make_model(self):
+        g_optimizer = tf.keras.optimizers.Adam(lr = self.lr)
+        d_optimizer = tf.keras.optimizers.Adam(lr = self.lr)
+
+        generator = Generator.generator_model(self.x_train.shape[1], self.output_dim, self.x_train.shape[2])
+        discriminator = Discriminator.discriminator_model(self.x_train.shape[1])
+        return generator, discriminator

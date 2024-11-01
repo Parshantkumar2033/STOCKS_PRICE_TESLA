@@ -1,4 +1,5 @@
 from imports import *
+import config
 
 class DataPreparation:
     def __init__(self, dataset1, dataset2) -> None:
@@ -141,7 +142,7 @@ class Preprocess:
         '''
 
         target_df_series = pd.DataFrame(df[target_column])
-        data = pd.DataFrame(df.iloc[:, :])
+        data = pd.DataFrame(df.iloc[:, :]) 
 
         X_scaler = MinMaxScaler(feature_range=range)
         y_scaler = MinMaxScaler(feature_range=range)
@@ -151,8 +152,8 @@ class Preprocess:
         X_scale_dataset = X_scaler.fit_transform(data)
         y_scale_dataset = y_scaler.fit_transform(target_df_series)
         
-        dump(X_scaler, open('X_scaler.pkl', 'wb'))
-        dump(y_scaler, open('y_scaler.pkl', 'wb'))
+        dump(X_scaler, open(config.X_SCALER_PKL, 'wb'))
+        dump(y_scaler, open(config.Y_SCALER_PKL, 'wb'))
         return X_scale_dataset, y_scale_dataset
         
     def batch_data(x_data: Union[np.ndarray, List[List[float]]], 
