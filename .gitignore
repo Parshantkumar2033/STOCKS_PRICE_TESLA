@@ -6,3 +6,8 @@
 
 /Models/Discriminator/TSLA
 /Models/Generator/TSLA
+
+/Notebooks/.ipynb_checkpoints
+/Notebooks/X_scaler.pkl
+/Notebooks/Y_scaler.pkl
+/Notebooks/models_gan
