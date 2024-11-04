@@ -1,5 +1,3 @@
-
-
 # **Tesla Stock Price Prediction with GANs and Sentiment Analysis**
 
 ## **Overview**
@@ -52,14 +50,14 @@ This structured combination of sentiment and market data allows for advanced ana
   - Progressive dimensionality reduction from **high units (1024)** to **lower units (64)** to create abstract feature representations.
   - **Dense layers for output** processing to produce synthetic sequences in the same format as real data.
 
-    ![Generator](Output\Model\Generator_model_keras.png)
+    ![Generator](Output/Model/Generator_model_keras.png)
 
 - **Discriminator Model**:
   - A **CNN-based** structure with **Conv1D** layers to process sequential data.
   - **LeakyReLU** activation to prevent dead neurons.
   - **Dense layers** leading to a **sigmoid output**, which assigns probabilities to identify real vs. synthetic sequences.
 
-    ![Discriminator](output\Model\Discriminator_model_keras.png)
+    ![Discriminator](Output/Model/Discriminator_model_keras.png)
 
 ### **3. Model Training**
 - **Training Data**: Historical stock data combined with sentiment scores and calculated technical indicators.
@@ -141,13 +139,13 @@ tesla-stock-prediction-gans/
 
 - **Validation with Historical Data**: Compare predictions to historical Tesla stock prices.
 
-    ![Training Results](Output\Training\Training_results.png)
+    ![Training Results](Output/Training/Training_results.png)
 
 ## **Results**
 - Overview of the prediction accuracy and model improvements.
 - Visualization of predicted vs. actual stock prices for Tesla.
 
-    ![Test Results](Output\Test\Test_data_plot.png)
+    ![Test Results](Output/Test/test_data_plot.png)
 
 ## **Future Improvements**
 - Fine-tune GAN architecture.
