@@ -68,7 +68,7 @@ This structured combination of sentiment and market data allows for advanced ana
 - **Sentiment Scores**: **VADER**-calculated sentiment scores from Tesla Twitter news.
 - **Technical Indicators**: Includes **MA7, MA20,	MACD, 20SD,	upper_band, lower_band,	EMA, logmomentum** as technical indicators calculated from stock data. 
     
-    Read [**Techincal_indicators.md**](Technical_indicators.md) for explanation.
+    Read [**Techincal_indicators.md**](Techincal_indicators.md) for explanation.
 - **Price Data**: Historical **open, close, high, low, AdjClose, volume**.
 
 ## **Project Structure**
